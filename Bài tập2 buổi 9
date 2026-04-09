@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bai tap buoi 9</title>
+</head>
+<body>
+    <h1>Bài tập JavaScript buổi 9</h1>
+
+    <script>
+        let fullName = "Bui Thi Huong";
+        let studentId = "27A4042946";
+
+        let email = "huongbt." + studentId.toLowerCase() + "@hvnh.edu.vn";
+        let coursePeriod = studentId.slice(0, 2);
+
+        // Lấy mã khoa
+        let facultyCode = studentId.slice(3, 6);
+        let faculty = "";
+
+        if (facultyCode === "404") {
+            faculty = "Cong nghe thong tin va Kinh te so";
+        } else if (facultyCode === "401") {
+            faculty = "Tai chinh - Ngan hang";
+        } else if (facultyCode === "402") {
+            faculty = "Ke toan - Kiem toan";
+        } else if (facultyCode === "403") {
+            faculty = "Quan tri kinh doanh";
+        } else if (facultyCode === "405") {
+            faculty = "Kinh doanh quoc te";
+        } else if (facultyCode === "406") {
+            faculty = "Luat";
+        } else if (facultyCode === "407") {
+            faculty = "Kinh te";
+        } else {
+            faculty = "Khac";
+        }
+
+        let last4 = studentId.slice(-4);
+        let sum = 0;
+
+        for (let num of last4) {
+            sum += Number(num);
+        }
+
+        document.write("Email: " + email + "<br>");
+        document.write(
+            "Xin chào " + fullName +
+            ", bạn là sinh viên khóa " + coursePeriod +
+            ", khoa " + faculty +
+            ", tổng 4 số cuối trong mã sinh viên là " + sum
+        );
+    </script>
+</body>
+</html>
