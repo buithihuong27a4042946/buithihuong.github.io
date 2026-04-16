@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sinh viên</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>DANH SÁCH SINH VIÊN</h2>
+    <input type="file" id="excelFile" accept=".xlsx, .xls">
+
+    <table id="studentTable">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Mã SV</th>
+                <th>Họ tên</th>
+                <th>Khóa học</th>
+                <th>Khoa</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        class SinhVien {
+            constructor(stt, maSV, hoTen) {
+                this.stt = stt;
+                this.maSV = maSV;
+                this.hoTen = hoTen;
+                this.khoaHoc = "K" + maSV.substring(0, 2);
+                this.khoa = this.layTenKhoa();
+                this.email = this.taoEmail();
+            }
+
+            taoEmail() {
+                let parts = this.hoTen.toLowerCase().split(" ");
+                let ten = parts[parts.length - 1];
+                let ho = parts[0][0];
+                let dem = "";
+
+                for (let i = 1; i < parts.length - 1; i++) {
+                    dem += parts[i][0];
+                }
+
+                return `${ten}${ho}${dem}.${this.maSV.toLowerCase()}@hvnh.edu.vn`;
+            }
+
+            layTenKhoa() {
+                let maKhoa = this.maSV.substring(3, 6);
+
+                if (maKhoa === "401") return "Khoa Tài chính - Ngân hàng";
+                if (maKhoa === "402") return "Khoa Kế toán";
+                if (maKhoa === "403") return "Khoa Quản trị kinh doanh";
+                if (maKhoa === "404") return "Khoa Công nghệ thông tin và Kinh tế số";
+                if (maKhoa === "405") return "Khoa Kinh doanh quốc tế";
+                if (maKhoa === "406") return "Khoa Luật";
+                if (maKhoa === "407") return "Khoa Ngoại ngữ";
+                if (maKhoa === "408") return "Khoa Kinh tế";
+                if (maKhoa === "409") return "Khoa Kiểm toán";
+
+                return "Chưa xác định";
+            }
+        }
+
+        document.getElementById("excelFile").addEventListener("change", function(e) {
+            let file = e.target.files[0];
+            let reader = new FileReader();
+
+            reader.onload = function(event) {
+                let data = new Uint8Array(event.target.result);
+                let workbook = XLSX.read(data, { type: "array" });
+                let sheet = workbook.Sheets[workbook.SheetNames[0]];
+                let rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                let tbody = document.querySelector("#studentTable tbody");
+                tbody.innerHTML = "";
+
+                for (let i = 1; i < rows.length; i++) {
+                    let row = rows[i];
+                    if (!row[0] || !row[1] || !row[2]) continue;
+
+                    let sv = new SinhVien(row[0], String(row[1]), row[2]);
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${sv.stt}</td>
+                            <td>${sv.maSV}</td>
+                            <td>${sv.hoTen}</td>
+                            <td>${sv.khoaHoc}</td>
+                            <td>${sv.khoa}</td>
+                            <td>${sv.email}</td>
+                        </tr>
+                    `;
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+
+</body>
+</html>
